@@ -1,0 +1,203 @@
+﻿{
+  "Header": {
+    "_": [
+      "https://github.com/3F/vsSolutionBuildEvent"
+    ],
+    "Compatibility": "0.9"
+  },
+  "PreBuild": [
+    {
+      "Enabled": true,
+      "Name": "ActDir",
+      "Caption": "Preparing data",
+      "SupportMSBuild": true,
+      "SupportSBEScripts": true,
+      "BuildType": "Common",
+      "Confirmation": false,
+      "Mode": {
+        "$type": "net.r_eg.vsSBE.Events.ModeScript, vsSolutionBuildEvent",
+        "Type": "Script",
+        "Command__": [
+          "#[$(revDeltaBase = \"2017/04/08\")]",
+          "#[$(revDeltaMin  = $([System.Math]::Pow(10, 3)))]",
+          "##[$(revDeltaMax = $([System.Math]::Pow(10, 5)))]",
+          "#[$(revDeltaMax  = 65534)] #[\" limit of AssemblyVersion (2^16 - 2) - i.e. 65534 max allowed \"]",
+          "",
+          "#[var pVer = #[File get(\".version\")]]",
+          "",
+          "#[\" ",
+          "    Calculate revision",
+          "\"]",
+          "#[var tBase     = $([System.DateTime]::Parse('$(revDeltaBase)').ToBinary())]",
+          "#[var tNow      = $([System.DateTime]::UtcNow.Ticks)]",
+          "#[var revBuild  = #[$(",
+          "                    [System.TimeSpan]::FromTicks('$(",
+          "                        [MSBuild]::Subtract($(tNow), $(tBase))",
+          "                    )')",
+          "                    .TotalMinutes.ToString('0'))]]",
+          "                     ",
+          "#[var revBuild  = #[$(",
+          "                    [MSBuild]::Add(",
+          "                        $(revDeltaMin), ",
+          "                        $([MSBuild]::Modulo(",
+          "                            $(revBuild), ",
+          "                            $([MSBuild]::Subtract(",
+          "                                $(revDeltaMax), $(revDeltaMin)",
+          "                             ))",
+          "                         ))",
+          "                     )",
+          "                   )]",
+          "]",
+          "",
+          "#[$(hMSBuildVersion = \"$(pVer).$(revBuild)\")]",
+          "",
+          "#[\" ",
+          "    Checking of the git folder to define sha1, branch name, etc.",
+          "\"]",
+          "#[var isGit = #[IO cmd(\"git rev-parse 2>&1\")]]",
+          "#[( $(isGit) == \"\" )",
+          "{",
+          "    #[var bSha1 = #[IO sout(\"git\", \"rev-parse --short HEAD\")]]",
+          "    ",
+          "    #[$(hMSBuildVersion = \"$(hMSBuildVersion)+$(bSha1)\")]",
+          "}]",
+          ""
+        ]
+      }
+    },
+    {
+      "Enabled": true,
+      "Name": "ActBuild",
+      "Caption": "Processing ...",
+      "SupportMSBuild": true,
+      "SupportSBEScripts": true,
+      "BuildType": "Common",
+      "Confirmation": false,
+      "Mode": {
+        "$type": "net.r_eg.vsSBE.Events.ModeScript, vsSolutionBuildEvent",
+        "Type": "Script",
+        "Command__": [
+          "#[$(dbin = 'bin\\\\Release\\\\')]",
+          "#[$(odir = \"$(dbin)raw\\\\\")]",
+          "",
+          "#[IO delete.directory(\"$(dbin)\", true)]",
+          "{",
+          "    #[IO copy.directory(\"\", \"$(dbin)\", true)]",
+          "    #[IO copy.directory(\"\", \"$(odir)\", true)]",
+          "}",
+          "",
+          "#[var frontend = frontend.bat]",
+          "#[var gntECore = \"GetNuTool\\\\bin\\\\Release\\\\raw\\\\executables\\\\batch\\\\gnt.bat\"]",
+          "#[var hMSBuild = $(odir)hMSBuild.bat]",
+          "",
+          "#[try",
+          "{",
+          "    #[IO writeLine(STDOUT):",
+          "        #[IO cmd(\"copy /Y/B $(frontend)+$(gntECore) $(hMSBuild)\")]",
+          "     ]",
+          "}",
+          "catch(err, msg)",
+          "{",
+          "    #[IO write(STDOUT):",
+          "        Trying with another method... ]",
+          "    ",
+          "    #[IO cmd(\"type $(frontend)>$(hMSBuild)\")]",
+          "    #[IO cmd(\"type $(gntECore)>>$(hMSBuild)\")]",
+          "    ",
+          "    #[IO writeLine(STDOUT): ok]",
+          "",
+          "}]",
+          "",
+          "",
+          "#[\" ",
+          "    finalization",
+          "\"]",
+          "#[IO replace.Regex(\"$(hMSBuild)\", \"(@echo off) & echo.*?exit /B \\d+\", \"$1\")]",
+          "",
+          "",
+          "#[\" ",
+          "    update version",
+          "\"]",
+          "#[IO replace(\"$(hMSBuild)\", \"$-version-$\", \"$(hMSBuildVersion)\")]"
+        ]
+      }
+    },
+    {
+      "Enabled": true,
+      "Name": "ActCompress",
+      "Caption": "generate light & minified versions",
+      "SupportMSBuild": true,
+      "SupportSBEScripts": true,
+      "BuildType": "Common",
+      "Confirmation": false,
+      "Mode": {
+        "$type": "net.r_eg.vsSBE.Events.ModeScript, vsSolutionBuildEvent",
+        "Type": "Script",
+        "Command__": [
+          "#[IO writeLine(STDOUT):",
+          "    #[IO cmd(\"compress \\\"$(hMSBuild)\\\" \\\"$(odir)\\\" \")]",
+          "]"
+        ]
+      }
+    }
+  ],
+  "PostBuild": [
+    {
+      "Enabled": true,
+      "Name": "ActTest",
+      "Caption": "Tests",
+      "SupportMSBuild": true,
+      "SupportSBEScripts": true,
+      "IgnoreIfBuildFailed": false,
+      "BuildType": "Common",
+      "Confirmation": false,
+      "Mode": {
+        "$type": "net.r_eg.vsSBE.Events.ModeScript, vsSolutionBuildEvent",
+        "Type": "Script",
+        "Command__": [
+          "##[IO writeLine(STDOUT):",
+          "    #[IO cmd(\"tests \\\"$(hMSBuild)\\\" \\\"$(odir)\\\" \", 600)]",
+          "]",
+          "",
+          "#[IO copy.directory(\"tests\", \"$(odir)\\tests\", true, true)]",
+          "#[IO replace.Regex(\"$(odir)\\tests\\_run.bat\", \"set\\s+core=%\\d\", \"set core=\\\"..\\hMSBuild.bat\\\"\")]",
+          "#[IO replace.Regex(\"$(odir)\\tests\\_run.bat\", \"set\\s+vdir=%\\d\", \"set vdir=\\\"..\\\\\"\")]"
+        ]
+      }
+    },
+    {
+      "Enabled": true,
+      "Name": "ActBin",
+      "Caption": "Binaries & Zip ...",
+      "SupportMSBuild": true,
+      "SupportSBEScripts": true,
+      "IgnoreIfBuildFailed": true,
+      "BuildType": "Common",
+      "Confirmation": false,
+      "Mode": {
+        "$type": "net.r_eg.vsSBE.Events.ModeScript, vsSolutionBuildEvent",
+        "Type": "Script",
+        "Command__": [
+          "#[IO copy.file({",
+          "                \"Readme.md\",",
+          "                \"changelog.txt\",",
+          "                \"License.txt\",",
+          "                \".gitattributes\",",
+          "                \".version\"",
+          "               },",
+          "               \"$(odir)\", true)]",
+          "",
+          "#[IO copy.file(\"$(dbin)hMSBuild.full.bat\", \"$(dbin)raw/compiled.full/hMSBuild.bat\", true)]",
+          "#[IO delete.files({\"$(dbin)hMSBuild.full.bat\"})]",
+          "",
+          "#[var zipdir = $(dbin.Replace(\"\\\\\", \"/\"))]",
+          "#[7z pack.directory",
+          "(",
+          "    \"$(zipdir)raw\", ",
+          "    \"$(zipdir)hMSBuild.$(hMSBuildVersion).zip\"    ",
+          ")]"
+        ]
+      }
+    }
+  ]
+}

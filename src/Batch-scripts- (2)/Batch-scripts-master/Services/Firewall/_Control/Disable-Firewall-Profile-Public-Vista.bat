@@ -1,0 +1,1 @@
+netsh advfirewall set publicprofile state off

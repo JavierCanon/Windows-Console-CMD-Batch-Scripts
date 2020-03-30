@@ -1,0 +1,172 @@
+- - - - - - - - - - - - - - - - - - - - -  
+hMSBuild - https://github.com/3F/hMSBuild
+- - - - - - - - - - - - - - - - - - - - -  
+
+[v2.3] 2020.01.29
+
+    * NEW: Implemented `-vsw-as "args..."`
+           Reassigns default commands to vswhere if used.
+           
+           For example:
+           ```
+           hMSBuild -only-path -vsw-as "-products Microsoft.VisualStudio.Product.BuildTools"
+           ```
+           Related Issues: #12, #14, #8,
+           
+    * CHANGED: VS2017+. Using the most modern instance by default.
+               You can also specify `-vsw-priority` and `-force` keys to use only what is needed. 
+               Related Issues: #14, #8.
+               
+    * CHANGED: Updated wswhere to 2.8.4 by default.
+
+    * CHANGED: Updated GetNuTool 1.8
+               https://github.com/3F/GetNuTool/releases/tag/1.8
+               
+               Most important fix for hMSBuild:
+               "The remote server returned an error: (407) Proxy Authentication Required."
+               Related issue: https://github.com/3F/DllExport/issues/133
+               
+    * NOTE: An compiled.full version now will be distributed together with official hMSBuild releases.
+               https://twitter.com/GitHub3F/status/1218224792970715136
+               (zip packages) https://github.com/3F/hMSBuild/releases
+
+
+[v2.2] 2019.07.20
+
+    * FIXED: Fixed searching from MS BuildTools products. Issue #12 (Thanks @odalet).
+    
+    * CHANGED: [VS2017+] hMSBuild will search now in ANY available products. PR #13 (Thanks @odalet).
+    
+    * NOTE: In addition to changes above, please use `-vsw-priority` and `-force` keys to use only what is needed. 
+            Issues: #8, #14.
+
+
+[v2.1] 2019.05.27
+
+    * NEW: Support for VS2019 msbuild (Thanks @gerhardol)
+
+    * CHANGED: Removed possible last extra slash `\` from path, ie. ~ `..\Bin\\MSBuild.exe` 
+               When x32 for searching from Visual Studio with `-notamd64` key.
+               Part of PR #11
+
+    * CHANGED: Default remote vswhere is 2.6.7.
+               https://github.com/microsoft/vswhere/releases/tag/2.6.7
+
+
+[v2.0] 2018.12.23
+
+    * NEW: Full support of the following special characters for MSBuild args. Issue #7.
+           ```
+            ' &!~`@#$^(+)_=%-;
+           ```
+           Compatible way for both 1.x and 2.0: 
+           https://github.com/3F/hMSBuild/issues/7#issuecomment-447507797
+           
+    * NEW: Added `-vsw-priority` feature. Issue #8.
+            ```
+             -vsw-priority {IDs} - Non-strict components preference: C++ etc.
+                                   Separated by space: https://aka.ms/vs/workloads
+            ```
+           
+    * NEW: Added `-stable` key. To ignore possible beta releases in last attempts.
+    
+    * NEW: Additional `-reset-cache` key. To reset all cached vswhere versions before processing.
+    
+    * NEW: Optional aggressive behavior for `-vsw-priority`, `-notamd64` through `-force` key.
+    
+    * FIXED: Fixed receiving of remote vswhere version specified by default (when no `-vswhere-version`).
+    
+    * FIXED: Fixes usage of changed vswhere version specified via `-vswhere-version` when it was already cached.
+    
+    * CHANGED: Algorithm of searching:
+
+        * Versions: 
+          * VS2017+ ➟ VS2015, VS2013, ... ➟ .netfx
+          
+        * Architectures (configure via `-notamd64` key): 
+          * x64 ➟ x32
+          
+        * Priorities (configure via `-vsw-priority` and `-stable` keys). 
+          Specific workload components in more priority than pre-release products. See Issue #8
+
+          1. Stable releases with selected workload components (C++ etc) ➟ Same via beta releases if allowed.
+          2. Stable releases with any available components ➟ Same via beta releases if allowed.
+          
+    * CHANGED: Updated keys: `-no-vswhere`, `-no-vs`, `-no-netfx`, `-vsw-version`, `-no-cache`. 
+               Old keys still are activated, but it will cause a warnings (stdout).
+               
+    * CHANGED: Optional `__p_call` flag if you plan to use the call-type to invoke hMSBuild inside your scripts etc.
+               
+    * CHANGED: Fully updated compression. Now only minified version will be distributed by default.
+               Also, do not search the light versions: New compiling will not generate this at all.
+               https://github.com/3F/hMSBuild/issues/7#issuecomment-447505688
+               
+    * CHANGED: New URL for official latest stable batch-scripts: 
+               https://3F.github.io/hMSBuild/releases/latest/
+               
+               Other releases: https://github.com/3F/hMSBuild/releases
+               
+    * CHANGED: Default remote vswhere is 2.5.2.
+               
+    * CHANGED: Updated GetNuTool v1.7
+               Release note: https://github.com/3F/GetNuTool/releases/tag/v1.7
+               
+           
+    
+[v1.2.2] 2017.08.18
+
+    * FIXED: Updated GetNuTool v1.6.1:
+             https://github.com/3F/GetNuTool/blob/master/changelog.txt
+             
+             Important fixes:
+             * FIXED: Avoids errors with possible incorrect CRC & Compressed size info.
+             * FIXED: Fixed problem "Input string was not in a correct format" when used version with release type.
+             * FIXED: Fixed problems with paths and whitespace characters for `-unpack` command.
+        
+    * FIXED: Visual Studio 2017 Update 3 compatibility. Issue #3.
+    * CHANGED: Non-zero exit code when compilation fails. Issue #4.
+    * NOTE: Now you can get the latest stable versions easily:
+            * https://3F.github.io/hMSBuild/releases/latest/minified/
+            * https://3F.github.io/hMSBuild/releases/latest/full/
+            * https://3F.github.io/hMSBuild/releases/latest/light/
+    
+[v1.2.1] 2017.05.26
+
+    * FIXED: Fixed possible problem "... is not recognized as an internal or external command"
+    * FIXED: Fixed problem with double quotes for arguments to original msbuild, for example: 
+             /t:Build /p:Configuration="Any CPU"
+
+    * NEW: Light edition & minified version via new compressor
+
+[v1.2] 2017.05.19
+    
+    * FIXED: Fixed problem of sensitivity to whitespaces between arguments.
+    * NEW: Added `local` keyword for `-vswhere-version` command to use only local versions - Issue #1
+            ```
+            -vswhere-version {num} - Specific version of vswhere. Where {num}:
+                                     * Versions: 1.0.50 ...
+                                     * Keywords: 
+                                       `latest` to get latest available version; 
+                                       `local`  to use only local versions: 
+                                                (.bat;.exe /or from +15.2.26418.1 VS-build);
+            ```
+            
+    * NEW: Added searching of vswhere.bat/exe where placed hMSBuild.bat before VS Installer folder.
+    * NEW: Added `-only-path` key to display only fullpath to found MSBuild.
+    * CHANGED: `-vswhereVersion` command has been renamed to `-vswhere-version`.
+                The old command still available for backward compatibility with version 1.1, but it's marked as obsolete and not recommended to use anymore.
+                
+    * CHANGED: vswhere version by default now is 1.0.62
+
+[v1.1] 2017.04.10
+
+    * FIXED: Fixed problem with finding of 32bit version from .NET Framework.
+    * CHANGED: Changed logic of `-notamd64` command to find 32bit version from Visual Studio.
+    * NEW: Implemented `-version` command.
+
+[v1.0] 2017.04.06
+
+    * The first point - A lightweight tool (compiled batch file ~19 Kb that can be embedded inside any scripts or other batch files) - an easy helper for searching of available MSBuild tools. 
+                        Supports tools from VS2017+ (does not require additional vswhere.exe), VS2015 or less, other versions from .NET Framework.  
+    
+

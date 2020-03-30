@@ -1,0 +1,49 @@
+{panel:bgColor=#D8E4F1}
+!information.png! See the [associates:CopyEndStates], [associates:CopyReports], and [associates:VCDoxygen] jobs for additional details.
+{panel}
+
+h2. Visual C++ and C# Builder Job
+{excerpt}Works as a MSBuild and Klocwork manager, simplifying the complex relations between the tool versions and options.{excerpt} The script has been optimized to require no additional input from the user for the default scenario. See all the following details and options for utilizing the full functionality of this script.
+
+h3. Usage Instructions
+* Build > Use builders from another project > VCBuild
+* Post-build Actions > Use publishers from another project > VCBuild
+* Set any Environment Variables if non-defaults are desired
+
+h3. Supported Versions
+* *Visual Studio 2008* - 9.0
+* *Visual Studio 2010* - 10.0
+* *Visual Studio 2012* - 11.0
+* *Visual Studio 2013* - 12.0
+* *Klocwork 9.6 or 10*
+
+h3. Supported Labels
+* *VS2008* - Visual Studio 2008 compatible node. This will default VCVER to *90*.
+* *VS2010* - Visual Studio 2010 compatible node. This will default VCVER to *100*.
+* *VS2012* - Visual Studio 2012 compatible node. This will default VCVER to *110*.
+* *VS2013* - Visual Studio 2013 compatible node. This will default VCVER to *120*.
+* *KLOCWORK* - Klocwork 9.6+ compatible node. This will default KLOCWORK to *YES*.
+* *DOXYGEN* - Doxygen 1.8+ compatible node. This will default DOXYGEN to *YES*.
+
+h3. Optional Variables
+{quote}(Defaults are *bold*){quote}
+* *VCARC* - \[ *x86* \| x64 \| ... \] - The target processor architecture.
+* *VCVER* - \[ 90 \| 100 \| 110 \| *120* \] - The compiler version to use.
+* *VCLOG* - \[ q\[uiet\] \| m\[inimal\] \| *n\[ormal\]* \| d\[etailed\] \| diag\[nostic\] \] - The verbosity of the logging.
+* *VCCON* - \[ *Release;Debug* \] - Semi-colon delimited list of configurations to build.
+* *VCCAN* - \[ *NO* \| YES \] - Run Microsoft Code Analysis on the project.
+* *VCCAR* - \[ *\*RecommendedRules.ruleset* \] Code Analysis Rule Set to use.
+* *KLOCWORK* - \[ *NO* \| YES \] - Run Klocwork analysis on the project?
+* *DOXYGEN* - \[ *NO* \| YES \] - Run Doxygen on the project?
+* *PIPELINE* - \[ *Solution-Test* \| 2012.01_SVC-ENG \| 2015.01_SVC-ENG \]
+
+h3. Build Variables
+{quote}Only edit if you understand how these variables work{quote}
+* *INCLUDE* - Search list for header (.h) files.
+* *LIB* - Search list for static library (.lib) and type library (.tlb) files.
+* *LIBPATH* - (a.k.a. Reference Path) Search list for dynamic library (.dll) files for import.
+* *PATH* - (a.k.a. Executable Path) Search list for dynamic library (.dll) files for reference.
+* *REPOSITORY* - Warehouse and Pipeline path to reference in the build.
+
+h3. Klocwork Details
+* New issues will make a trunk job unstable and will fail branch jobs.

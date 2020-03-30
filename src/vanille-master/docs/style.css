@@ -1,0 +1,139 @@
+:root {
+	--main-color: #000000;
+	--main-color-light: #777777;
+	--vanille-color: #e0a969;
+	--vanille-color-light: #fbeabc;
+}
+
+body {
+	font-family: 'Roboto', sans-serif;
+	text-align: left;
+	text-transform: lowercase !important;
+}
+
+.content {
+	max-width: 960px;
+	margin-left: auto;
+	margin-right: auto;
+}
+
+header img {
+	max-height: 6em;
+	max-width: 100%;
+}
+
+h1 {
+	font-family: 'Heebo', sans-serif;
+	font-weight: 900;
+	color: var(--main-color);
+	margin-bottom: 0em;
+	font-size: 6em;
+	line-height: 0.9em;
+}
+
+#carousel {
+	display: flex;
+	justify-content: center;
+	padding: none;
+	margin-bottom: 1em;
+}
+
+#carousel img {
+	max-height: 10em;
+	padding: 0.2em;
+}
+
+@media only screen and (max-width: 600px) {
+	#carousel {
+		flex-direction: column !important;
+	}
+
+	#carousel img {
+		align-self: center;
+		object-fit: cover;
+	}
+}
+
+h2 {
+	display: block;
+	width: fit-content;
+	font-family: 'Heebo', sans-serif;
+	font-size: 1.4em;
+}
+
+h2::content {
+	background-color: var(--main-color);
+	color: #000;
+}
+
+h3,
+h4 {
+	font-family: 'Heebo', sans-serif;
+}
+
+blockquote {
+	margin-top: 0;
+}
+
+blockquote p {
+	margin: 0.1em;
+}
+
+.question {
+	color: var(--main-color-light);
+	border-left: 4px solid var(--main-color-light);
+	padding-left: 0.5em;
+}
+
+#dl-button {
+	background-color: var(--main-color);
+	margin-left: 0.5em;
+	margin-right: 0.5em;
+
+	padding: 1em;
+	padding-top: 0.6em;
+	padding-bottom: 0.6em;
+	border: 0;
+	border-radius: 6em;
+	transition: .1s;
+}
+
+#dl-button:hover {
+	transform: scale(1.05);
+}
+
+#dl-button:focus {
+	transform: scale(0.9);
+}
+
+#dl-button a {
+	color: #fff;
+	text-decoration: none;
+	font-size: large;
+}
+#dl-button:disabled {
+	background-color: var(--main-color-light);
+}
+#dl-button:disabled:hover {
+	transform: none !important;
+}
+
+p {
+	line-height: 1.3em;
+}
+
+a:link,
+a:visited {
+	text-decoration: none;
+
+	color: var(--vanille-color);
+}
+
+a:hover {
+	color: var(--vanille-color-light);
+}
+
+#codeblock {
+	padding: 1em;
+	background-color: gainsboro;
+}
