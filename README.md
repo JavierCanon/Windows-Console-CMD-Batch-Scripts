@@ -35,7 +35,7 @@ We use [SemVer](http://semver.org/) for versioning. For the versions available, 
 
 ## Authors
 
-* **Javier Cañon** - *Initial work* - [www.JavierCanon.com](https://www.javiercanon.com)
+* **Javier Cañon** - *Initial work* - [JavierCanon.com](https://javiercanon.com)
 
 See also the list of [contributors](/AUTHORS.md) who participated in this project.
 
@@ -51,4 +51,4 @@ See also the list of [contributors](/AUTHORS.md) who participated in this projec
 This project is licensed under the MIT LICENSE - see the [LICENSE.md](/LICENSE.md) file for details.
 
 ---
-Made with ❤️ by **[Javier Cañon](https://www.javiercanon.com)**.
+Made with ❤️ by **[Javier Cañon](https://javiercanon.com)**.
